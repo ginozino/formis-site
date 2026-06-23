@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formis — Client Portal</title>
+<meta name="description" content="Log in to your Formis client portal to view your projects, invoices, and assigned assistant.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+
+:root{
+  --obsidian:#0E0E12;
+  --obsidian-2:#16161C;
+  --obsidian-3:#1C1C24;
+  --gold:#B8963E;
+  --gold-light:#D4AF62;
+  --gold-mist:rgba(184,150,62,0.1);
+  --parchment:#F5F0E8;
+  --paper:#FAFAF8;
+  --paper-dim:#F2F0EC;
+  --ink:#0E0E12;
+  --ink-soft:#5A5A6A;
+  --ink-muted:#8A8A9A;
+  --line:#E8E4DC;
+  --line-dark:rgba(245,240,232,0.08);
+  --line-dark-strong:rgba(245,240,232,0.14);
+  --white:#FFFFFF;
+  --mint:#2FA88A;
+  --mint-light:#E1F5EF;
+  --amber:#E8A23D;
+  --amber-light:#FCF1DF;
+  --coral:#E0594F;
+  --coral-light:#FBE9E7;
+  --indigo:#4F5BD5;
+  --indigo-light:#ECEEFC;
+}
+
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Inter',-apple-system,sans-serif;
+  font-size:16px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+
+a{color:inherit;text-decoration:none;}
+ul{list-style:none;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;}
+
+.display{font-family:'Cormorant Garamond',serif;font-weight:600;letter-spacing:-0.02em;line-height:1.05;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+.label{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);}
+.muted{color:var(--ink-muted);font-size:13px;}
+
+/* ---------- nav ---------- */
+.nav{
+  background:var(--obsidian);
+  padding:0 32px;
+  border-bottom:1px solid var(--line-dark);
+}
+.nav-inner{
+  max-width:1100px;margin:0 auto;height:64px;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:20px;color:var(--parchment);}
+.brand-mark{
+  width:30px;height:30px;border:1px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--gold);
+}
+.nav-right{display:flex;align-items:center;gap:20px;}
+.nav-client-name{font-size:13px;color:rgba(245,240,232,0.5);}
+.btn-signout{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;
+  letter-spacing:0.1em;text-transform:uppercase;
+  padding:8px 16px;border:1px solid var(--line-dark-strong);color:rgba(245,240,232,0.5);
+  transition:all .2s;
+}
+.btn-signout:hover{border-color:var(--gold);color:var(--gold);}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1100px;margin:0 auto;padding:0 32px;}
+@media(max-width:640px){.wrap{padding:0 20px;}.nav{padding:0 20px;}}
+
+/* ---------- auth screens ---------- */
+.auth-screen{
+  min-height:calc(100vh - 64px);
+  display:flex;align-items:center;justify-content:center;
+  padding:40px 24px;
+  background:var(--paper);
+}
+.auth-card{
+  background:var(--white);border:1px solid var(--line);
+  padding:44px 40px;width:100%;max-width:420px;
+  border-top:2px solid var(--gold);
+}
+@media(max-width:480px){.auth-card{padding:32px 24px;}}
+.auth-eyebrow{margin-bottom:20px;}
+.auth-title{font-size:30px;margin-bottom:8px;}
+.auth-sub{font-size:14px;color:var(--ink-soft);margin-bottom:32px;line-height:1.6;}
+.form-field{margin-bottom:18px;}
+.form-field label{
+  display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;
+  font-weight:500;text-transform:uppercase;letter-spacing:0.1em;
+  color:var(--ink-muted);margin-bottom:8px;
+}
+.form-field input{
+  width:100%;padding:12px 14px;border:1px solid var(--line);background:var(--white);
+  font-family:'Inter',sans-serif;font-size:14px;color:var(--ink);transition:border-color .2s;
+}
+.form-field input:focus{outline:none;border-color:var(--gold);}
+.btn-primary{
+  width:100%;padding:14px;background:var(--gold);color:var(--obsidian);
+  font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;
+  letter-spacing:0.1em;text-transform:uppercase;border:1px solid var(--gold);
+  transition:background .2s;margin-top:4px;
+}
+.btn-primary:hover:not(:disabled){background:var(--gold-light);}
+.btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+.auth-error{
+  font-size:13px;color:#B8392F;background:var(--coral-light);
+  padding:10px 12px;margin-bottom:16px;line-height:1.5;
+}
+.auth-success{
+  text-align:center;padding:8px 0;
+}
+.success-mark{
+  width:52px;height:52px;border:1px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 20px;
+  font-family:'IBM Plex Mono',monospace;font-size:16px;color:var(--gold);
+}
+.auth-success h3{font-family:'Cormorant Garamond',serif;font-size:22px;margin-bottom:10px;}
+.auth-success p{font-size:14px;color:var(--ink-soft);line-height:1.6;}
+
+/* ---------- portal ---------- */
+.portal{padding:40px 0 80px;}
+.portal-header{padding:32px 0 28px;border-bottom:1px solid var(--line);margin-bottom:36px;}
+.portal-greeting{font-size:13px;color:var(--ink-muted);margin-bottom:6px;}
+.portal-title{font-size:clamp(24px,3vw,32px);}
+.portal-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media(max-width:780px){.portal-grid{grid-template-columns:1fr;}}
+
+/* cards */
+.card{background:var(--white);border:1px solid var(--line);padding:24px;}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;}
+.card-count{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-muted);}
+.card-full{grid-column:1/-1;}
+
+/* project items */
+.project-item{padding:14px 0;border-bottom:1px solid var(--line);}
+.project-item:last-child{border-bottom:none;}
+.project-item-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;}
+.project-name{font-weight:600;font-size:14px;}
+.project-due{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-muted);}
+.progress-row{display:flex;align-items:center;gap:10px;}
+.progress-track{flex:1;height:4px;background:var(--line);overflow:hidden;}
+.progress-fill{height:100%;background:var(--gold);transition:width .4s;}
+.progress-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-muted);white-space:nowrap;}
+.task-list{margin-top:10px;display:flex;flex-direction:column;gap:6px;}
+.task-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-soft);}
+.task-check{
+  width:16px;height:16px;border:1.5px solid var(--line);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.task-check.done{background:var(--mint);border-color:var(--mint);color:#fff;font-size:9px;}
+.task-title-done{text-decoration:line-through;color:var(--ink-muted);}
+
+/* invoices */
+.invoice-table{width:100%;border-collapse:collapse;font-size:13px;}
+.invoice-table th{
+  text-align:left;font-family:'IBM Plex Mono',monospace;font-size:10px;
+  text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-muted);
+  padding:0 0 10px;border-bottom:1px solid var(--line);font-weight:500;
+}
+.invoice-table td{padding:12px 0;border-bottom:1px solid var(--line);vertical-align:middle;}
+.invoice-table tr:last-child td{border-bottom:none;}
+.invoice-num{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-muted);}
+.invoice-amount{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;}
+.pill{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 9px;font-size:10px;font-weight:600;
+  font-family:'IBM Plex Mono',monospace;letter-spacing:0.04em;text-transform:uppercase;
+}
+.pill-dot{width:5px;height:5px;border-radius:50%;}
+.pill-mint{background:var(--mint-light);color:#1F8068;}
+.pill-mint .pill-dot{background:var(--mint);}
+.pill-amber{background:var(--amber-light);color:#A6701B;}
+.pill-amber .pill-dot{background:var(--amber);}
+.pill-coral{background:var(--coral-light);color:#B8392F;}
+.pill-coral .pill-dot{background:var(--coral);}
+.pill-slate{background:#EEF1F5;color:#5C6679;}
+.pill-slate .pill-dot{background:#8B95A7;}
+
+/* VA card */
+.va-card{display:flex;align-items:center;gap:18px;}
+.va-avatar{
+  width:52px;height:52px;border:1px solid var(--line);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;
+  color:var(--ink);background:var(--paper-dim);
+}
+.va-name{font-weight:600;font-size:15px;margin-bottom:3px;}
+.va-role{font-size:13px;color:var(--ink-muted);}
+.va-email{font-size:13px;color:var(--gold);margin-top:6px;}
+
+/* request form */
+.request-form{display:flex;flex-direction:column;gap:14px;}
+.request-textarea{
+  width:100%;padding:12px 14px;border:1px solid var(--line);
+  font-family:'Inter',sans-serif;font-size:14px;color:var(--ink);
+  resize:vertical;min-height:90px;transition:border-color .2s;
+}
+.request-textarea:focus{outline:none;border-color:var(--gold);}
+.btn-submit{
+  align-self:flex-start;padding:12px 24px;background:var(--obsidian);color:var(--parchment);
+  font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;
+  letter-spacing:0.08em;text-transform:uppercase;border:1px solid var(--obsidian);
+  transition:background .2s;
+}
+.btn-submit:hover:not(:disabled){background:var(--obsidian-2);}
+.btn-submit:disabled{opacity:0.5;cursor:not-allowed;}
+.request-success{font-size:13px;color:var(--mint);font-family:'IBM Plex Mono',monospace;margin-top:4px;}
+
+/* empty state */
+.empty{
+  padding:32px 0;text-align:center;
+  font-size:13px;color:var(--ink-muted);
+}
+
+/* loading */
+.loading-screen{
+  min-height:calc(100vh - 64px);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:14px;color:var(--ink-muted);
+}
+.loading-mark{
+  width:44px;height:44px;border:1px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--gold);
+  animation:pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+/* error banner */
+.error-banner{
+  background:var(--coral-light);color:#B8392F;padding:10px 16px;
+  font-size:13px;margin-bottom:20px;display:flex;align-items:center;gap:8px;
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important;}
+}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="brand">
+      <span class="brand-mark">FM</span>
+      Formis
+    </a>
+    <div class="nav-right">
+      <span class="nav-client-name" id="navClientName"></span>
+      <button class="btn-signout" id="signOutBtn" style="display:none">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<!-- AUTH: magic link request -->
+<div class="auth-screen" id="authScreen">
+  <div class="auth-card">
+    <div class="auth-eyebrow"><span class="label">Client portal</span></div>
+    <h1 class="auth-title display">Welcome back.</h1>
+    <p class="auth-sub">Enter the email address on your Formis account and we'll send you a secure sign-in link — no password needed.</p>
+    <div id="authError" class="auth-error" style="display:none"></div>
+    <div id="magicLinkForm">
+      <div class="form-field">
+        <label for="emailInput">Your email address</label>
+        <input type="email" id="emailInput" placeholder="you@company.com" autocomplete="email" required>
+      </div>
+      <button class="btn-primary" id="sendLinkBtn">Send sign-in link</button>
+    </div>
+    <div class="auth-success" id="magicLinkSent" style="display:none">
+      <div class="success-mark">✓</div>
+      <h3>Check your inbox</h3>
+      <p>We've sent a secure sign-in link to <strong id="sentToEmail"></strong>. Click it to access your portal — the link expires in 60 minutes.</p>
+    </div>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div id="loadingScreen" style="display:none">
+  <div class="loading-screen">
+    <div class="loading-mark">FM</div>
+    <p>Loading your portal…</p>
+  </div>
+</div>
+
+<!-- PORTAL -->
+<div id="portalScreen" style="display:none">
+  <div class="wrap portal">
+    <div class="portal-header">
+      <p class="portal-greeting">Good to see you</p>
+      <h1 class="portal-title display" id="portalClientName">Your workspace</h1>
+    </div>
+    <div id="portalError" class="error-banner" style="display:none">
+      ⚠ Having trouble loading your data. Please refresh the page.
+    </div>
+    <div class="portal-grid">
+
+      <!-- Projects -->
+      <div class="card card-full" id="projectsCard">
+        <div class="card-head">
+          <span class="card-title">Active projects</span>
+          <span class="card-count" id="projectCount"></span>
+        </div>
+        <div id="projectsList"><div class="empty">No active projects right now.</div></div>
+      </div>
+
+      <!-- Invoices -->
+      <div class="card card-full" id="invoicesCard">
+        <div class="card-head">
+          <span class="card-title">Invoices</span>
+          <span class="card-count" id="invoiceCount"></span>
+        </div>
+        <div id="invoicesList"><div class="empty">No invoices yet.</div></div>
+      </div>
+
+      <!-- Your VA -->
+      <div class="card">
+        <div class="card-head"><span class="card-title">Your assistant</span></div>
+        <div id="vaInfo"><div class="empty">No assistant assigned yet.</div></div>
+      </div>
+
+      <!-- Submit a request -->
+      <div class="card">
+        <div class="card-head"><span class="card-title">Submit a request</span></div>
+        <div class="request-form">
+          <div class="form-field" style="margin-bottom:0">
+            <label for="requestText">What do you need help with?</label>
+            <textarea class="request-textarea" id="requestText" placeholder="Describe the task or request — your assistant will pick it up promptly…"></textarea>
+          </div>
+          <button class="btn-submit" id="submitRequestBtn">Send request</button>
+          <p class="request-success" id="requestSuccess" style="display:none">✓ Request sent — your assistant will be in touch shortly.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CONFIG — must match your owner app
+// ============================================================
+const SUPABASE_URL = 'https://cnujsoidllrjjyrvkpuv.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNudWpzb2lkbGxyamp5cnZrcHV2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNzk4MDEsImV4cCI6MjA5Nzc1NTgwMX0.4gyQKyoFnuKJPjaTU2cySWac4O3Dx_lP9wBH-19oyGU';
+
+// ============================================================
+// AUTH
+// ============================================================
+const auth = {
+  session: null,
+
+  async sendMagicLink(email) {
+    // The redirect URL must match exactly what you set in Supabase Auth settings
+    const redirectTo = window.location.origin + window.location.pathname;
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/magiclink`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+      body: JSON.stringify({ email, options: { emailRedirectTo: redirectTo } }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error_description || err.msg || 'Failed to send link');
+    }
+    return true;
+  },
+
+  async exchangeToken(accessToken, refreshToken) {
+    this.session = { access_token: accessToken, refresh_token: refreshToken };
+    // Get user info
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}` },
+    });
+    if (!res.ok) throw new Error('Could not verify session');
+    const user = await res.json();
+    this.session.user = user;
+    sessionStorage.setItem('formis_client_session', JSON.stringify(this.session));
+    return user;
+  },
+
+  loadSession() {
+    try {
+      const raw = sessionStorage.getItem('formis_client_session');
+      if (!raw) return null;
+      this.session = JSON.parse(raw);
+      return this.session;
+    } catch { return null; }
+  },
+
+  signOut() {
+    sessionStorage.removeItem('formis_client_session');
+    this.session = null;
+    // Clear hash from URL
+    history.replaceState(null, '', window.location.pathname);
+    showAuth();
+  },
+
+  getHeaders() {
+    return {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${this.session?.access_token || SUPABASE_ANON_KEY}`,
+      'Prefer': 'return=representation',
+    };
+  },
+};
+
+// ============================================================
+// DB HELPERS
+// ============================================================
+async function dbSelect(table, query = '') {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}${query}`, {
+    headers: { ...auth.getHeaders(), 'Prefer': 'return=representation' },
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+// ============================================================
+// UI STATE
+// ============================================================
+function showAuth() {
+  document.getElementById('authScreen').style.display = 'flex';
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('portalScreen').style.display = 'none';
+  document.getElementById('signOutBtn').style.display = 'none';
+  document.getElementById('navClientName').textContent = '';
+}
+
+function showLoading() {
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('loadingScreen').style.display = 'block';
+  document.getElementById('portalScreen').style.display = 'none';
+}
+
+function showPortal() {
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('portalScreen').style.display = 'block';
+  document.getElementById('signOutBtn').style.display = 'block';
+}
+
+// ============================================================
+// FORMAT HELPERS
+// ============================================================
+function formatCurrency(n) {
+  return Number(n || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+}
+function formatDate(d) {
+  if (!d) return '—';
+  return new Date(d + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+function invoiceTotal(inv) {
+  return (inv.items || []).reduce((s, it) => s + (Number(it.qty) || 0) * (Number(it.rate) || 0), 0);
+}
+function invoiceStatus(inv) {
+  if (inv.status === 'paid') return { label: 'Paid', cls: 'pill-mint' };
+  if (inv.status === 'draft') return { label: 'Draft', cls: 'pill-slate' };
+  const due = inv.due_date;
+  if (due && due < new Date().toISOString().slice(0, 10)) return { label: 'Overdue', cls: 'pill-coral' };
+  return { label: 'Sent', cls: 'pill-amber' };
+}
+function initials(name) {
+  return (name || '').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+}
+
+// ============================================================
+// RENDER PORTAL
+// ============================================================
+async function renderPortal(userEmail) {
+  showLoading();
+  try {
+    // Find client by email
+    const clients = await dbSelect('clients', `?email=eq.${encodeURIComponent(userEmail)}&limit=1`);
+    if (!clients.length) {
+      // Client exists as auth user but not yet added in the owner app
+      document.getElementById('portalClientName').textContent = userEmail;
+      document.getElementById('navClientName').textContent = userEmail;
+      document.getElementById('projectsList').innerHTML = '<div class="empty">Your account is being set up. Check back shortly.</div>';
+      document.getElementById('invoicesList').innerHTML = '<div class="empty">Nothing here yet.</div>';
+      showPortal();
+      return;
+    }
+
+    const client = clients[0];
+    document.getElementById('portalClientName').textContent = client.name || userEmail;
+    document.getElementById('navClientName').textContent = client.name || userEmail;
+
+    // Load projects + tasks + invoices + assigned VA in parallel
+    const [projects, tasks, invoices, teamMembers] = await Promise.all([
+      dbSelect('projects', `?client_id=eq.${client.id}&order=created_at.asc`),
+      dbSelect('tasks', `?order=created_at.asc`),
+      dbSelect('invoices', `?client_id=eq.${client.id}&order=created_at.desc`),
+      client.assigned_va ? dbSelect('team_members', `?id=eq.${client.assigned_va}&limit=1`) : Promise.resolve([]),
+    ]);
+
+    // ---- Projects ----
+    const activeProjects = projects.filter(p => p.status !== 'completed');
+    document.getElementById('projectCount').textContent = `${activeProjects.length} active`;
+    if (activeProjects.length === 0) {
+      document.getElementById('projectsList').innerHTML = '<div class="empty">No active projects right now.</div>';
+    } else {
+      document.getElementById('projectsList').innerHTML = activeProjects.map(p => {
+        const projectTasks = tasks.filter(t => t.project_id === p.id);
+        const total = projectTasks.length;
+        const done = projectTasks.filter(t => t.done).length;
+        const pct = total ? Math.round((done / total) * 100) : 0;
+        const taskItems = projectTasks.map(t => `
+          <div class="task-item">
+            <div class="task-check ${t.done ? 'done' : ''}">${t.done ? '✓' : ''}</div>
+            <span class="${t.done ? 'task-title-done' : ''}">${t.title}</span>
+          </div>
+        `).join('');
+        return `
+          <div class="project-item">
+            <div class="project-item-head">
+              <span class="project-name">${p.title}</span>
+              ${p.due_date ? `<span class="project-due">Due ${formatDate(p.due_date)}</span>` : ''}
+            </div>
+            ${total > 0 ? `
+              <div class="progress-row">
+                <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+                <span class="progress-label">${done}/${total}</span>
+              </div>
+            ` : ''}
+            ${projectTasks.length > 0 ? `<div class="task-list">${taskItems}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ---- Invoices ----
+    document.getElementById('invoiceCount').textContent = `${invoices.length} total`;
+    if (invoices.length === 0) {
+      document.getElementById('invoicesList').innerHTML = '<div class="empty">No invoices yet.</div>';
+    } else {
+      const rows = invoices.map(inv => {
+        const total = invoiceTotal(inv);
+        const status = invoiceStatus(inv);
+        return `
+          <tr>
+            <td class="invoice-num">${inv.number || '—'}</td>
+            <td>${formatDate(inv.issue_date)}</td>
+            <td>${formatDate(inv.due_date)}</td>
+            <td class="invoice-amount">${formatCurrency(total)}</td>
+            <td><span class="pill ${status.cls}"><span class="pill-dot"></span>${status.label}</span></td>
+          </tr>
+        `;
+      }).join('');
+      document.getElementById('invoicesList').innerHTML = `
+        <table class="invoice-table">
+          <thead><tr><th>Invoice</th><th>Issued</th><th>Due</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    // ---- Assigned VA ----
+    if (teamMembers.length) {
+      const va = teamMembers[0];
+      document.getElementById('vaInfo').innerHTML = `
+        <div class="va-card">
+          <div class="va-avatar">${initials(va.name)}</div>
+          <div>
+            <div class="va-name">${va.name}</div>
+            <div class="va-role">${va.role || 'Virtual assistant'}</div>
+            ${va.email ? `<div class="va-email">${va.email}</div>` : ''}
+          </div>
+        </div>
+      `;
+    } else {
+      document.getElementById('vaInfo').innerHTML = '<div class="empty">Your assistant will be assigned shortly.</div>';
+    }
+
+    showPortal();
+
+  } catch (err) {
+    console.error('Portal load error:', err);
+    document.getElementById('portalError').style.display = 'flex';
+    showPortal();
+  }
+}
+
+// ============================================================
+// MAGIC LINK — handle token in URL hash on return
+// ============================================================
+async function handleMagicLinkCallback() {
+  const hash = window.location.hash;
+  if (!hash) return false;
+
+  const params = new URLSearchParams(hash.slice(1));
+  const accessToken = params.get('access_token');
+  const refreshToken = params.get('refresh_token');
+  const type = params.get('type');
+
+  if (!accessToken || type !== 'magiclink') return false;
+
+  // Clear the hash from the URL so it's not visible
+  history.replaceState(null, '', window.location.pathname);
+
+  try {
+    const user = await auth.exchangeToken(accessToken, refreshToken);
+    await renderPortal(user.email);
+    return true;
+  } catch (err) {
+    console.error('Magic link error:', err);
+    document.getElementById('authError').textContent = 'This sign-in link has expired or already been used. Please request a new one.';
+    document.getElementById('authError').style.display = 'block';
+    return false;
+  }
+}
+
+// ============================================================
+// BOOT
+// ============================================================
+async function boot() {
+  // 1. Check for magic link callback in URL
+  const handled = await handleMagicLinkCallback();
+  if (handled) return;
+
+  // 2. Check for existing session in sessionStorage
+  const session = auth.loadSession();
+  if (session?.user?.email) {
+    await renderPortal(session.user.email);
+    return;
+  }
+
+  // 3. Show auth screen
+  showAuth();
+}
+
+// ============================================================
+// EVENT LISTENERS
+// ============================================================
+
+// Send magic link
+document.getElementById('sendLinkBtn').addEventListener('click', async () => {
+  const email = document.getElementById('emailInput').value.trim();
+  const btn = document.getElementById('sendLinkBtn');
+  const errEl = document.getElementById('authError');
+
+  if (!email) {
+    errEl.textContent = 'Please enter your email address.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  errEl.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  try {
+    await auth.sendMagicLink(email);
+    document.getElementById('sentToEmail').textContent = email;
+    document.getElementById('magicLinkForm').style.display = 'none';
+    document.getElementById('magicLinkSent').style.display = 'block';
+  } catch (err) {
+    errEl.textContent = err.message || 'Something went wrong. Please try again.';
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Send sign-in link';
+  }
+});
+
+// Allow Enter key on email input
+document.getElementById('emailInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('sendLinkBtn').click();
+});
+
+// Sign out
+document.getElementById('signOutBtn').addEventListener('click', () => auth.signOut());
+
+// Submit request (sends email via Formspree — reuses your intake endpoint)
+document.getElementById('submitRequestBtn').addEventListener('click', async () => {
+  const text = document.getElementById('requestText').value.trim();
+  const btn = document.getElementById('submitRequestBtn');
+  const success = document.getElementById('requestSuccess');
+  if (!text) return;
+
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  success.style.display = 'none';
+
+  try {
+    // Uses your intake Formspree endpoint — replace with your real ID
+    const INTAKE_ENDPOINT = 'https://formspree.io/f/YOUR_INTAKE_FORM_ID';
+    const clientName = document.getElementById('portalClientName').textContent;
+    const userEmail = auth.session?.user?.email || '';
+
+    await fetch(INTAKE_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+      body: (() => {
+        const fd = new FormData();
+        fd.append('name', clientName);
+        fd.append('email', userEmail);
+        fd.append('_subject', `Client request — ${clientName}`);
+        fd.append('details', text);
+        return fd;
+      })(),
+    });
+
+    document.getElementById('requestText').value = '';
+    success.style.display = 'block';
+    setTimeout(() => { success.style.display = 'none'; }, 4000);
+  } catch {
+    alert('Something went wrong sending your request. Please email us directly.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Send request';
+  }
+});
+
+// Boot on load
+boot();
+</script>
+</body>
+</html>
