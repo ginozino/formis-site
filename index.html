@@ -691,7 +691,7 @@ footer{
       <a href="#faq">FAQ</a>
     </div>
     <div class="nav-right">
-      <a href="#" class="nav-portal" id="portalLink">Client login</a>
+      <a href="formis-portal.html" class="nav-portal" id="portalLink">Client login</a>
       <button class="btn-nav" id="navBookBtn">Book a consultation</button>
       <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
         <svg width="22" height="16" viewBox="0 0 22 16" fill="none">
@@ -1227,10 +1227,7 @@ document.querySelectorAll('[data-close]').forEach(btn => btn.addEventListener('c
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(bookModal); closeModal(intakeModal); } });
 
 // client portal placeholder
-document.getElementById('portalLink').addEventListener('click', e => {
-  e.preventDefault();
-  alert('Client portal coming soon — this will connect to your project and invoice dashboard.');
-});
+// Client login links directly to portal via href
 
 // form submissions
 function handleSubmit(formId, modal) {
